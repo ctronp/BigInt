@@ -5,22 +5,23 @@
 
 #include <stdlib.h>
 #include <stdbool.h>
+#include <assert.h>
 
 // Possible implementation of Splay Tree
 
 // BiG Vector
 
-typedef enum __attribute__((__packed__)) struct_positive {
-    none = 0,
-    negative,
-    positive
+typedef enum struct_positive {
+    none = (uint8_t) 0,
+    negative = (uint8_t) 1,
+    positive = (uint8_t) 2,
 } Positive;
 
 typedef struct struct_vector {
-    size_t size;
-    size_t capacity;
-    size_t *data;
-    Positive positive;
+    uintptr_t size;
+    uintptr_t capacity;
+    uintptr_t *data;
+    uint8_t positive;
 } BGV;
 
 typedef union {
@@ -72,13 +73,10 @@ void BGN_delete(BGN *number) {
 }
 
 
-// coding time test based on the IDE,
-// the IDE warn what is not going to be run.
-__attribute__((unused)) static inline void compiler_assert() {
-    if (sizeof(Positive) == 1) exit(1);
+// Small Testing
+static inline void compiler_assert() {
+    assert(sizeof(Positive) == 1);
 
-
-    exit(0);
 }
 
 

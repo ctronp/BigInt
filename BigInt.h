@@ -11,21 +11,24 @@
 typedef unsigned char byte;
 
 // BiG Number / default structure to hide implementation
-typedef struct {} BGN;
+typedef struct {
+    uintptr_t size;
+} BGN;
 
 
 // Create New Number
 BGN *BGN_new_number();
 
 // Create New Number from an integer
-BGN *BGN_from_integer(ssize_t number);
+BGN *BGN_from_integer(intptr_t number);
 
 // Create New Number from an unsigned
-BGN *BGN_from_unsigned(size_t number);
+BGN *BGN_from_unsigned(uintptr_t number);
 
 // Delete Big Number
 void BGN_delete(BGN *number);
 
+// Shift Left
 
 
 #endif //BIG_INT_BIGINT_H

@@ -4,5 +4,7 @@
 # Except
 !.gitignore
 !BigInt.*
+!CMakeLists.txt
 !LICENSE
 !README.md
+!Tests.c
