@@ -4,4 +4,5 @@
 # Except
 !.gitignore
 !BigInt.*
+!LICENSE
 !README.md
