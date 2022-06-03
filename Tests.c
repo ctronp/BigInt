@@ -6,6 +6,8 @@
 #include <stdio.h>
 #include "BigInt.h"
 
+#pragma warning(disable : 5105)
+
 #ifdef _MSC_VER
 
 #include <windows.h>
@@ -57,10 +59,10 @@ bool result;
     result = test_name(); \
     if (!result) {                      \
         red_terminal();\
-        printf("Test %u: %s\n\tFailed\n\n",test_counter, #test_name );           \
+        printf("Test %u: %s\n\tFailed\n\n",test_counter++, #test_name );           \
     } else {              \
         green_terminal();\
-        printf("Test %u: %s\n\tPassed\n\n",test_counter, #test_name);    \
+        printf("Test %u: %s\n\tPassed\n\n",test_counter++, #test_name);    \
     }
 
 bool base_number() {
@@ -69,8 +71,29 @@ bool base_number() {
     return true;
 }
 
+bool new_to_unsigned() {
+    intmax_t rand_value = 1035945505586175809;
+    BGN *t1 = BGN_from_integer(rand_value);
+    BGN *t2 = BGN_from_unsigned(rand_value);
+
+    bool answer =
+            rand_value ==
+            BGN_to_unsigned(t1) &&
+            BGN_to_unsigned(t1) ==
+            BGN_to_integer(t1) &&
+            BGN_to_unsigned(t2) ==
+            BGN_to_integer(t2) &&
+            BGN_to_unsigned(t1) ==
+            BGN_to_unsigned(t2);
+    BGN_delete(t1);
+    BGN_delete(t2);
+    return answer;
+}
+
 int main() {
+    printf("bits in uintmax_t: %d\n\n\n", sizeof(uintmax_t) * 8);
     test(base_number)
+    test(new_to_unsigned)
 }
 
 

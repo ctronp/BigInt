@@ -12,16 +12,15 @@
 // BiG Vector
 
 typedef enum struct_positive {
-    none = (uint8_t) 0,
-    negative = (uint8_t) 1,
-    positive = (uint8_t) 2,
+    positive_zero = 0,
+    negative = -2,
 } Positive;
 
 typedef struct struct_vector {
-    uintptr_t size;
-    uintptr_t capacity;
-    uintptr_t *data;
-    uint8_t positive;
+    uintmax_t size;
+    uintmax_t capacity;
+    uintmax_t *data;
+    int8_t positive;
 } BGV;
 
 typedef union {
@@ -72,13 +71,60 @@ void BGN_delete(BGN *number) {
     free(temp.BGV->data);
 }
 
+BGN *BGN_from_integer(intmax_t number) {
+    UN temp;
+    temp.BGV = malloc(sizeof(BGV));
 
-// Small Testing
-static inline void compiler_assert() {
-    assert(sizeof(Positive) == 1);
+    Positive positive;
+    if (number >= 0) {
+        positive = positive_zero;
+    } else {
+        positive = negative;
+    }
 
+
+    *temp.BGV = (BGV) {
+            .capacity = 1,
+            .data = malloc(sizeof(uintmax_t)),
+            .size = 1,
+            .positive = positive
+    };
+    temp.BGV->data[0] = (uintmax_t) number;
+    return temp.BGN;
 }
 
+BGN *BGN_from_unsigned(uintmax_t number) {
+    UN temp;
+    temp.BGV = malloc(sizeof(BGV));
 
+    *temp.BGV = (BGV) {
+            .capacity = 1,
+            .data = malloc(sizeof(uintmax_t)),
+            .size = 1,
+            .positive = positive_zero
+    };
+    temp.BGV->data[0] = number;
+    return temp.BGN;
+}
 
+uintmax_t BGN_to_unsigned(BGN *number) {
+    UN temp;
+    temp.BGN = number;
 
+    if (temp.BGV->size == 0) {
+        return 0;
+    }
+
+    return temp.BGV->data[0];
+}
+
+intmax_t BGN_to_integer(BGN *number) {
+    UN temp;
+    temp.BGN = number;
+
+    if (temp.BGV->size == 0) {
+        return 0;
+    }
+
+    return ((intmax_t) temp.BGV->data[0]) * (temp.BGV->positive + 1);
+}

@@ -3,16 +3,28 @@
 
 
 
-#ifndef BIG_INT_BIGINT_H
-#define BIG_INT_BIGINT_H
+#pragma once
+#pragma warning(disable : 5105)
 
 #include <stdint.h>
+#include <stdbool.h>
+
+/// Settings
+/// Here you set how the code will run
 
 typedef unsigned char byte;
 
+
+#define BGN_ERRORS true
+
+#
+
+
+/// Documentation:
+
 // BiG Number / default structure to hide implementation
 typedef struct {
-    uintptr_t size;
+    uintmax_t size;
 } BGN;
 
 
@@ -20,15 +32,17 @@ typedef struct {
 BGN *BGN_new_number();
 
 // Create New Number from an integer
-BGN *BGN_from_integer(intptr_t number);
+BGN *BGN_from_integer(intmax_t number);
 
 // Create New Number from an unsigned
-BGN *BGN_from_unsigned(uintptr_t number);
+BGN *BGN_from_unsigned(uintmax_t number);
 
 // Delete Big Number
 void BGN_delete(BGN *number);
 
-// Shift Left
+// To uintmax_t (will ignore the sign, and bits over uintmax_t)
+uintmax_t BGN_to_unsigned(BGN *number);
 
-
-#endif //BIG_INT_BIGINT_H
+// to intmax_t (will ignore bits over uintmax_t)
+// will overflow if the number is greater than 2 ^ (sizeof(uintmax_t)*8-1) -1
+intmax_t BGN_to_integer(BGN *number);
