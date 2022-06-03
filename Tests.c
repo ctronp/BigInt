@@ -53,11 +53,13 @@ static inline void black_terminal() {
 #endif
 
 unsigned test_counter = 0;
+bool failure = false;
 
 bool result;
 #define test(test_name) \
     result = test_name(); \
-    if (!result) {                      \
+    if (!result) {      \
+        failure = true;     \
         red_terminal();\
         printf("Test %u: %s\n\tFailed\n\n",test_counter++, #test_name );           \
     } else {              \
@@ -94,6 +96,9 @@ int main() {
     printf("bits in uintmax_t: %d\n\n\n", sizeof(uintmax_t) * 8);
     test(base_number)
     test(new_to_unsigned)
+
+    if (failure) exit(1);
+    exit(0);
 }
 
 
