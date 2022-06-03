@@ -1,0 +1,6 @@
+# Ignore Everuthing
+/*
+
+# Except
+!.gitignore
+!BigInt.*
