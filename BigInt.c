@@ -7,15 +7,15 @@
 #include <stdbool.h>
 #include <assert.h>
 
-// Possible implementation of Splay Tree
+typedef unsigned char byte;
 
-// BiG Vector
-
+/// Positive Number enum
 typedef enum struct_positive {
     positive_zero = 0,
     negative = -2,
 } Positive;
 
+/// BiG Vector
 typedef struct struct_vector {
     uintmax_t size;
     uintmax_t capacity;
@@ -23,17 +23,18 @@ typedef struct struct_vector {
     int8_t positive;
 } BGV;
 
+/// Union to change file type
 typedef union {
     BGN *BGN;
     BGV *BGV;
 } UN;
 
-static inline void bg_append(BGV *vector, byte value) {
+static inline void bg_append(BGV *vector, uintmax_t value) {
     if (vector->capacity != vector->size) {
         vector->data[vector->size++] = value;
     } else if (vector->capacity == 0) {
         vector->capacity = 1;
-        vector->data = malloc(sizeof(size_t));
+        vector->data = malloc(sizeof(uintmax_t));
         vector->data[0] = value;
     } else {
         vector->capacity <<= 2;
@@ -43,11 +44,11 @@ static inline void bg_append(BGV *vector, byte value) {
 }
 
 static inline size_t bg_byte_capacity(BGV *vector) {
-    return vector->capacity * sizeof(size_t);
+    return vector->capacity * sizeof(uintmax_t);
 }
 
 static inline size_t bg_byte_size(BGV *vector) {
-    return vector->size * sizeof(size_t);
+    return vector->size * sizeof(uintmax_t);
 }
 
 static inline BGN *bg_with_capacity(size_t capacity) {

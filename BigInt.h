@@ -12,13 +12,6 @@
 /// Settings
 /// Here you set how the code will run
 
-typedef unsigned char byte;
-
-
-#define BGN_ERRORS true
-
-#
-
 
 /// Documentation:
 
