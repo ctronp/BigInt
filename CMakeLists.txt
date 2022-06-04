@@ -7,4 +7,4 @@ include_directories(.)
 add_executable(test
         Tests.c
         BigInt.c
-)
+        )

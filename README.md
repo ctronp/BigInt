@@ -5,7 +5,7 @@ made for simple usage where pure C is the safest option.
 # Usage
 
 just download and add [BigInt.h](BigInt.h) and [BigInt.c](BigInt.c) as
-a static library. 
+a static library.
 
 # Functions
 
