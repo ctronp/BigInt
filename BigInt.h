@@ -4,7 +4,6 @@
 
 
 #pragma once
-#pragma warning(disable : 5105)
 
 #include <stdint.h>
 #include <stdbool.h>

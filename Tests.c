@@ -6,8 +6,6 @@
 #include <stdio.h>
 #include "BigInt.h"
 
-#pragma warning(disable : 5105)
-
 #ifdef _MSC_VER
 
 #include <windows.h>
@@ -29,11 +27,11 @@ static inline void green_terminal() {
     SetConsoleTextAttribute(hConsole, FOREGROUND_GREEN);
 }
 
-static inline void black_terminal() {
+static inline void default_terminal() {
     if (!w_singleton) {
         hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
     }
-    SetConsoleTextAttribute(hConsole, 0);
+    SetConsoleTextAttribute(hConsole, 3);
 }
 
 #else
@@ -46,7 +44,7 @@ static inline void green_terminal() {
     printf("\033[0;32m")
 }
 
-static inline void black_terminal() {
+static inline void default_terminal() {
     printf("\033[0;30m")
 }
 
@@ -104,6 +102,8 @@ bool new_to_integer() {
 }
 
 int main() {
+    default_terminal();
+
     printf("bits in uintmax_t: %d\n\n\n", sizeof(uintmax_t) * 8);
     test(base_number)
     test(new_to_unsigned)
