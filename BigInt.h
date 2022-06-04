@@ -6,35 +6,54 @@
 #pragma once
 
 #include <stdint.h>
-#include <stdbool.h>
 
-/// Settings
-/// Here you set how the code will run
+/// \Documentation
+/// Explained using a 64 bits architecture.
 
 
-/// Documentation:
-
-// BiG Number / default structure to hide implementation
+/// BiG Number is the default structure, used to hide implementation
 typedef struct {
     uintmax_t size;
 } BGN;
 
-
-// Create New Number
+/// BGN_new_number create a BigNumber initialized in 0
+/// \return new Big Number
 BGN *BGN_new_number();
 
-// Create New Number from an integer
+/// BGN_from_integer creates a number initialized
+/// \param number receive a intmax_t to initialize the Big Number
+/// \return new Big Number initialized
 BGN *BGN_from_integer(intmax_t number);
 
-// Create New Number from an unsigned
+/// BGN_from_unsigned creates a number initialized
+/// \param number receive a uintmax_t to initialize the Big Number
+/// \return new Big Number initialized
 BGN *BGN_from_unsigned(uintmax_t number);
 
-// Delete Big Number
+/// BGN_delete frees the memory from a number
+/// \param number Big Number to delete
 void BGN_delete(BGN *number);
 
-// To uintmax_t (will ignore the sign, and bits over uintmax_t)
+/// BGN_to_unsigned convert the last 64 bits to uintmax_t
+/// \param number Big Number that will be converted to uintmax_t
+/// \return last 64 bits of number as uintmax_t
 uintmax_t BGN_to_unsigned(BGN *number);
 
-// to intmax_t (will ignore bits over uintmax_t)
-// will overflow if the number is greater than 2 ^ (sizeof(uintmax_t)*8-1) -1
+/// BGN_to_integer convert the last 63 bits to uintmax_t
+/// from -(2 ^ 63) to (2 ^ 63).
+/// \n doesn't include -(2 ^ 63) -1
+/// \param number Big Number that will be converted to intmax_t
+/// \return last 64 bits of 'number' as intmax_t
 intmax_t BGN_to_integer(BGN *number);
+
+/// BGN_shift_left shift left the number.
+/// \param number number to be shifted
+/// \param shift number of bits to shift.
+/// \return new Big Number, equal to 'number' shifted to left 'shift' times.
+BGN *BGN_shift_left(BGN *number, uintmax_t shift);
+
+/// BGN_shift_right shift right the number.
+/// \param number number to be shifted
+/// \param shift number of bits to shift.
+/// \return new Big Number, equal to 'number' shifted to right 'shift' times.
+BGN *BGN_shift_right(BGN *number, uintmax_t shift);
