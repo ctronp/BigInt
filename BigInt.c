@@ -81,6 +81,7 @@ BGN *BGN_from_integer(intmax_t number) {
         positive = positive_zero;
     } else {
         positive = negative;
+        number *= -1;
     }
 
 

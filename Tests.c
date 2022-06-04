@@ -92,10 +92,22 @@ bool new_to_unsigned() {
     return answer;
 }
 
+bool new_to_integer() {
+    intmax_t rand_value = -1035945505586175809;
+    BGN *t1 = BGN_from_integer(rand_value);
+
+    bool answer =
+            rand_value ==
+            BGN_to_integer(t1);
+    BGN_delete(t1);
+    return answer;
+}
+
 int main() {
     printf("bits in uintmax_t: %d\n\n\n", sizeof(uintmax_t) * 8);
     test(base_number)
     test(new_to_unsigned)
+    test(new_to_integer)
 
     if (failure) exit(1);
     exit(0);
