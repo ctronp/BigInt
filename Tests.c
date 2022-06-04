@@ -4,6 +4,7 @@
 
 #include <stdbool.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include "BigInt.h"
 
 #ifdef _MSC_VER
@@ -37,15 +38,15 @@ static inline void default_terminal() {
 #else
 
 static inline void red_terminal() {
-    printf("\033[0;31m")
+    printf("\033[0;31m");
 }
 
 static inline void green_terminal() {
-    printf("\033[0;32m")
+    printf("\033[0;32m");
 }
 
 static inline void default_terminal() {
-    printf("\033[0;30m")
+    printf("\033[0;34m");
 }
 
 #endif
@@ -104,7 +105,7 @@ bool new_to_integer() {
 int main() {
     default_terminal();
 
-    printf("bits in uintmax_t: %d\n\n\n", sizeof(uintmax_t) * 8);
+    printf("bits in uintmax_t: %lu\n\n\n", sizeof(uintmax_t) * 8);
     test(base_number)
     test(new_to_unsigned)
     test(new_to_integer)
