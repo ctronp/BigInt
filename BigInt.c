@@ -31,7 +31,7 @@ typedef union {
 } UN;
 
 static inline void bg_fit(BGV *vector) {
-    while (!vector->data[vector->size]) {
+    while (vector->size && !vector->data[vector->size - 1]) {
         --vector->size;
     }
     if (vector->size == vector->capacity) {
@@ -161,8 +161,8 @@ BGN *BGN_shift_left(BGN *number, uintmax_t shift) {
     UN out;
 
     in.BGN = number;
-    unsigned new_zeros = shift / n_bits;
-    unsigned shift_size = shift % n_bits;
+    const unsigned new_zeros = shift / n_bits;
+    const unsigned shift_size = shift % n_bits;
 
     if (shift_size == 0) {
         out.BGV = bg_with_capacity_calloc(new_zeros + in.BGN->size);
@@ -176,13 +176,13 @@ BGN *BGN_shift_left(BGN *number, uintmax_t shift) {
     out.BGV = bg_with_capacity_calloc(new_zeros + in.BGN->size + 1);
     out.BGV->size = new_zeros + in.BGN->size + 1;
 
-    uintmax_t old_carry = 0, new_carry;
-    for (uintmax_t i = new_zeros; i < out.BGV->size; i++) {
-        new_carry = (out.BGV->data[i] & mask) >> diff_bits;
-        out.BGV->data[i] <<= shift_size;
-        out.BGV->data[i] |= old_carry;
-        old_carry = new_carry;
-    };
+    uintmax_t carry = 0;
+    for (uintmax_t i = 0; i < in.BGV->size; i++) {
+        const uintmax_t j = i + new_zeros;
+        out.BGV->data[j] = in.BGV->data[i] << shift_size;
+        out.BGV->data[j] |= carry;
+        carry = in.BGV->data[i] >> diff_bits;
+    }
 
     bg_fit(out.BGV);
     return out.BGN;

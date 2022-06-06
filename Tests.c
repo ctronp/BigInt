@@ -105,12 +105,15 @@ bool new_to_integer() {
 }
 
 bool shift_left_positive() {
-    intmax_t rand_value = 5807505;
+    intmax_t rand_value = 8807508551058554305;
     BGN *t1 = BGN_from_integer(rand_value);
     BGN *t2 = BGN_shift_left(t1, 3);
-    printf("%lu", BGN_to_unsigned(t2));
+    printf("obj: %ld\nactual: %ld\n",
+           ((rand_value << 3) & (UINTMAX_MAX >> 1)),
+           BGN_to_integer(t2)
+    );
     bool answer =
-            (rand_value << 3) ==
+            ((rand_value << 3) & (UINTMAX_MAX >> 1)) ==
             BGN_to_integer(t2);
     BGN_delete(t1);
     BGN_delete(t2);
