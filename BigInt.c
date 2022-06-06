@@ -220,8 +220,8 @@ BGN *BGN_shift_right(BGN *number, uintmax_t shift) {
 
     uintmax_t carry = 0;
     for (uintmax_t i = 0; i < in.BGV->size; i++) {
-        const uintmax_t in_pos = in.BGV->size - i;
-        const uintmax_t out_pos = out.BGV->size - i;
+        const uintmax_t in_pos = in.BGV->size - 1 - i;
+        const uintmax_t out_pos = out.BGV->size - 1 - i;
         out.BGV->data[out_pos] = in.BGV->data[in_pos] >> shift_size;
         out.BGV->data[out_pos] |= carry;
         carry = in.BGV->data[in_pos] << diff_bits;

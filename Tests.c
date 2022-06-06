@@ -153,8 +153,6 @@ bool shift_right_positive() {
     intmax_t rand_value = 8807508551058554305;
     BGN *t1 = BGN_from_integer(rand_value);
     BGN *t2 = BGN_shift_right(t1, 3);
-    DEBUG_P(rand_value);
-    DEBUG_P(BGN_to_integer(t2));
     bool answer =
             ((rand_value >> 3) & (UINTMAX_MAX >> 1)) ==
             BGN_to_integer(t2);
