@@ -7,6 +7,11 @@
 #include <stdlib.h>
 #include "BigInt.h"
 
+#define IS_INT(x) ((x) * 0 - 1) < (x)
+#define INT_PRINT(x) printf(#x": %llu\n", (long long unsigned)(x))
+#define UNS_PRINT(x) printf(#x": %lld\n", (long long)(x))
+#define DEBUG_P(x) IS_INT(x) ? INT_PRINT(x) : UNS_PRINT(x)
+
 #ifdef _MSC_VER
 
 #include <windows.h>
@@ -108,12 +113,50 @@ bool shift_left_positive() {
     intmax_t rand_value = 8807508551058554305;
     BGN *t1 = BGN_from_integer(rand_value);
     BGN *t2 = BGN_shift_left(t1, 3);
-    printf("obj: %ld\nactual: %ld\n",
-           ((rand_value << 3) & (UINTMAX_MAX >> 1)),
-           BGN_to_integer(t2)
-    );
     bool answer =
             ((rand_value << 3) & (UINTMAX_MAX >> 1)) ==
+            BGN_to_integer(t2);
+    BGN_delete(t1);
+    BGN_delete(t2);
+    return answer;
+}
+
+bool shift_left_negative() {
+    intmax_t rand_value = -8807508551058554305;
+    BGN *t1 = BGN_from_integer(rand_value);
+    BGN *t2 = BGN_shift_left(t1, 3);
+    BGN *t3 = BGN_shift_left(t1, 2);
+    BGN *t4 = BGN_shift_left(t3, 1);
+    bool answer =
+            BGN_to_integer(t2) ==
+            BGN_to_integer(t4);
+    BGN_delete(t1);
+    BGN_delete(t2);
+    BGN_delete(t3);
+    BGN_delete(t4);
+    return answer;
+}
+
+bool shift_left_small_negative() {
+    intmax_t rand_value = -88574305;
+    BGN *t1 = BGN_from_integer(rand_value);
+    BGN *t2 = BGN_shift_left(t1, 3);
+    bool answer =
+            BGN_to_integer(t2) ==
+            rand_value * 8;
+    BGN_delete(t1);
+    BGN_delete(t2);
+    return answer;
+}
+
+bool shift_right_positive() {
+    intmax_t rand_value = 8807508551058554305;
+    BGN *t1 = BGN_from_integer(rand_value);
+    BGN *t2 = BGN_shift_right(t1, 3);
+    DEBUG_P(rand_value);
+    DEBUG_P(BGN_to_integer(t2));
+    bool answer =
+            ((rand_value >> 3) & (UINTMAX_MAX >> 1)) ==
             BGN_to_integer(t2);
     BGN_delete(t1);
     BGN_delete(t2);
@@ -128,6 +171,9 @@ int main() {
     test(new_to_unsigned);
     test(new_to_integer);
     test(shift_left_positive);
+    test(shift_left_negative);
+    test(shift_left_small_negative);
+    test(shift_right_positive);
 
     if (failure) exit(1);
     exit(0);

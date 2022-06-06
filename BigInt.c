@@ -81,6 +81,12 @@ static inline void bg_copy_vector(BGV *origin, uintmax_t *destiny) {
     }
 }
 
+static inline void bg_copy_to_vector(const uintmax_t size, const uintmax_t *origin, BGV *destiny) {
+    for (uintmax_t i = 0; i < size; i++) {
+        destiny->data[i] = origin[i];
+    }
+}
+
 BGN *BGN_new_number() {
     return (BGN *) calloc(1, sizeof(BGV));
 }
@@ -155,7 +161,6 @@ intmax_t BGN_to_integer(BGN *number) {
     return (intmax_t) (in.BGV->data[0] & (UINTMAX_MAX >> 1));
 }
 
-//TODO end this function
 BGN *BGN_shift_left(BGN *number, uintmax_t shift) {
     UN in;
     UN out;
@@ -166,15 +171,17 @@ BGN *BGN_shift_left(BGN *number, uintmax_t shift) {
 
     if (shift_size == 0) {
         out.BGV = bg_with_capacity_calloc(new_zeros + in.BGN->size);
+        out.BGV->size = new_zeros + in.BGN->size;
+        out.BGV->positive = in.BGV->positive;
         bg_copy_vector(in.BGV, &out.BGV->data[new_zeros]);
         return out.BGN;
     }
 
     const uintmax_t diff_bits = (n_bits - shift_size);
-    const uintmax_t mask = UINTMAX_MAX << diff_bits;
 
     out.BGV = bg_with_capacity_calloc(new_zeros + in.BGN->size + 1);
     out.BGV->size = new_zeros + in.BGN->size + 1;
+    out.BGV->positive = in.BGV->positive;
 
     uintmax_t carry = 0;
     for (uintmax_t i = 0; i < in.BGV->size; i++) {
@@ -182,6 +189,42 @@ BGN *BGN_shift_left(BGN *number, uintmax_t shift) {
         out.BGV->data[j] = in.BGV->data[i] << shift_size;
         out.BGV->data[j] |= carry;
         carry = in.BGV->data[i] >> diff_bits;
+    }
+
+    bg_fit(out.BGV);
+    return out.BGN;
+}
+
+// TODO solve bug in test 6
+BGN *BGN_shift_right(BGN *number, uintmax_t shift) {
+    UN in;
+    UN out;
+
+    in.BGN = number;
+    const unsigned less_size = shift / n_bits;
+    const unsigned shift_size = shift % n_bits;
+
+    if (shift_size == 0) {
+        out.BGV = bg_with_capacity_calloc(in.BGN->size - less_size);
+        out.BGV->size = in.BGN->size - less_size;
+        out.BGV->positive = in.BGV->positive;
+        bg_copy_to_vector(in.BGV->size - less_size, &in.BGV->data[less_size], out.BGV);
+        return out.BGN;
+    }
+
+    const uintmax_t diff_bits = (n_bits - shift_size);
+
+    out.BGV = bg_with_capacity_calloc(in.BGN->size - less_size);
+    out.BGV->size = in.BGN->size - less_size;
+    out.BGV->positive = in.BGV->positive;
+
+    uintmax_t carry = 0;
+    for (uintmax_t i = 0; i < in.BGV->size; i++) {
+        const uintmax_t in_pos = in.BGV->size - i;
+        const uintmax_t out_pos = out.BGV->size - i;
+        out.BGV->data[out_pos] = in.BGV->data[in_pos] >> shift_size;
+        out.BGV->data[out_pos] |= carry;
+        carry = in.BGV->data[in_pos] << diff_bits;
     }
 
     bg_fit(out.BGV);
