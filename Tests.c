@@ -161,6 +161,18 @@ bool shift_right_positive() {
     return answer;
 }
 
+bool shift_right_negative() {
+    intmax_t rand_value = -8807508551058554305;
+    BGN *t1 = BGN_from_integer(rand_value);
+    BGN *t2 = BGN_shift_right(t1, 3);
+    bool answer =
+            rand_value / 8 ==
+            BGN_to_integer(t2);
+    BGN_delete(t1);
+    BGN_delete(t2);
+    return answer;
+}
+
 int main() {
     default_terminal();
 
@@ -172,6 +184,7 @@ int main() {
     test(shift_left_negative);
     test(shift_left_small_negative);
     test(shift_right_positive);
+    test(shift_right_negative);
 
     if (failure) exit(1);
     exit(0);
