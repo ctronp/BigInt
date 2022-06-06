@@ -6,7 +6,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-typedef unsigned char byte;
+//typedef unsigned char byte;
 
 const uintmax_t n_bits = sizeof(uintmax_t) * 8;
 
@@ -34,7 +34,7 @@ static inline void bg_fit(BGV *vector) {
     while (vector->size && !vector->data[vector->size - 1]) {
         --vector->size;
     }
-    if (vector->size == vector->capacity) {
+    if (vector->size != vector->capacity) {
         vector->capacity = vector->size;
         vector->data = realloc(vector->data, sizeof(uintmax_t) * vector->size);
     }
@@ -219,7 +219,7 @@ BGN *BGN_shift_right(BGN *number, uintmax_t shift) {
     out.BGV->positive = in.BGV->positive;
 
     uintmax_t carry = 0;
-    for (uintmax_t i = 0; i < in.BGV->size; i++) {
+    for (uintmax_t i = 0; i < out.BGV->size; i++) {
         const uintmax_t in_pos = in.BGV->size - 1 - i;
         const uintmax_t out_pos = out.BGV->size - 1 - i;
         out.BGV->data[out_pos] = in.BGV->data[in_pos] >> shift_size;
