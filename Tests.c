@@ -189,6 +189,22 @@ bool shift_left_right_positive() {
     return answer;
 }
 
+bool shift_left_right_negative() {
+    intmax_t rand_value = -375075902375902;
+    BGN *t1 = BGN_from_integer(rand_value);
+    BGN *t2 = BGN_shift_left(t1, 200);
+    BGN *t3 = BGN_shift_left(t2, 65);
+    BGN *t4 = BGN_shift_right(t3, 200 + 65);
+    bool answer =
+            rand_value ==
+            BGN_to_integer(t4);
+    BGN_delete(t1);
+    BGN_delete(t2);
+    BGN_delete(t3);
+    BGN_delete(t4);
+    return answer;
+}
+
 int main() {
     default_terminal();
 
@@ -202,6 +218,7 @@ int main() {
     test(shift_right_positive);
     test(shift_right_negative);
     test(shift_left_right_positive);
+    test(shift_left_right_negative);
 
     if (failure) exit(1);
     exit(0);
