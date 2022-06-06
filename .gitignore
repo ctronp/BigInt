@@ -3,8 +3,8 @@
 
 # Except
 !.gitignore
+!tests
 !BigInt.*
 !CMakeLists.txt
 !LICENSE
 !README.md
-!Tests.c

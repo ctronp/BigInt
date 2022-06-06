@@ -4,6 +4,7 @@
 #include "BigInt.h"
 
 #include <stdlib.h>
+#include <string.h>
 
 typedef unsigned char byte;
 
@@ -29,6 +30,16 @@ typedef union {
     BGV *BGV;
 } UN;
 
+static inline void bg_fit(BGV *vector) {
+    while (!vector->data[vector->size]) {
+        --vector->size;
+    }
+    if (vector->size == vector->capacity) {
+        vector->capacity = vector->size;
+        vector->data = realloc(vector->data, sizeof(uintmax_t) * vector->size);
+    }
+}
+
 static inline void bg_append(BGV *vector, uintmax_t value) {
     if (vector->capacity != vector->size) {
         vector->data[vector->size++] = value;
@@ -51,16 +62,23 @@ static inline size_t bg_byte_size(BGV *vector) {
     return vector->size * sizeof(uintmax_t);
 }
 
-static inline BGV *bg_with_capacity(uintmax_t capacity) {
+static inline BGV *bg_with_capacity_calloc(uintmax_t capacity) {
     UN out;
     out.BGV = malloc(sizeof(BGV));
     *out.BGV = (BGV) {
             .size = 0,
             .capacity = capacity,
-            .data = malloc(sizeof(uintmax_t) * capacity),
+            .data = calloc(capacity, sizeof(uintmax_t)),
             .positive = positive_zero
     };
     return out.BGV;
+}
+
+static inline void bg_copy_vector(BGV *origin, uintmax_t *destiny) {
+    bg_fit(origin);
+    for (unsigned i = 0; i < origin->size; i++) {
+        destiny[i] = origin->data[i];
+    }
 }
 
 BGN *BGN_new_number() {
@@ -147,19 +165,25 @@ BGN *BGN_shift_left(BGN *number, uintmax_t shift) {
     unsigned shift_size = shift % n_bits;
 
     if (shift_size == 0) {
-        out.BGV = bg_with_capacity(new_zeros + in.BGN->size);
-        //TODO copy uintmax_t from in to out.
+        out.BGV = bg_with_capacity_calloc(new_zeros + in.BGN->size);
+        bg_copy_vector(in.BGV, &out.BGV->data[new_zeros]);
+        return out.BGN;
     }
 
-    out.BGV = bg_with_capacity(new_zeros + in.BGN->size + 1);
+    const uintmax_t diff_bits = (n_bits - shift_size);
+    const uintmax_t mask = UINTMAX_MAX << diff_bits;
 
-    uintmax_t carry;
-    uintmax_t mask = UINTMAX_MAX << (n_bits - shift_size);
-    for (uintmax_t i = new_zeros; i < out.BGV->capacity; i++) {
+    out.BGV = bg_with_capacity_calloc(new_zeros + in.BGN->size + 1);
+    out.BGV->size = new_zeros + in.BGN->size + 1;
 
+    uintmax_t old_carry = 0, new_carry;
+    for (uintmax_t i = new_zeros; i < out.BGV->size; i++) {
+        new_carry = (out.BGV->data[i] & mask) >> diff_bits;
+        out.BGV->data[i] <<= shift_size;
+        out.BGV->data[i] |= old_carry;
+        old_carry = new_carry;
     };
 
-
-    while (out.BGV->data[out.BGV->size] == 0) --out.BGV->size;
+    bg_fit(out.BGV);
     return out.BGN;
 }

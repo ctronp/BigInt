@@ -56,6 +56,7 @@ bool failure = false;
 
 bool result;
 #define test(test_name) \
+    do {                \
     result = test_name(); \
     if (!result) {      \
         failure = true;     \
@@ -64,7 +65,8 @@ bool result;
     } else {              \
         green_terminal();\
         printf("Test %u: %s\n\tPassed\n\n",test_counter++, #test_name);    \
-    }
+    }                   \
+        } while(0)
 
 bool base_number() {
     BGN *t = BGN_new_number();
@@ -102,13 +104,27 @@ bool new_to_integer() {
     return answer;
 }
 
+bool shift_left_positive() {
+    intmax_t rand_value = 5807505;
+    BGN *t1 = BGN_from_integer(rand_value);
+    BGN *t2 = BGN_shift_left(t1, 3);
+    printf("%lu", BGN_to_unsigned(t2));
+    bool answer =
+            (rand_value << 3) ==
+            BGN_to_integer(t2);
+    BGN_delete(t1);
+    BGN_delete(t2);
+    return answer;
+}
+
 int main() {
     default_terminal();
 
     printf("bits in uintmax_t: %lu\n\n\n", sizeof(uintmax_t) * 8);
-    test(base_number)
-    test(new_to_unsigned)
-    test(new_to_integer)
+    test(base_number);
+    test(new_to_unsigned);
+    test(new_to_integer);
+    test(shift_left_positive);
 
     if (failure) exit(1);
     exit(0);
