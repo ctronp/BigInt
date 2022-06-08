@@ -7,14 +7,39 @@
 
 #include <stdint.h>
 
+/// enable to be able to modify implementation from the code
+/// \n is less safe
+#ifdef BGN_SHOW_IMP
+
+/// Positive Number enum
+typedef enum struct_positive {
+    positive_zero = 0,
+    negative = 1,
+} Positive;
+
+/// BiG Vector
+typedef struct struct_vector {
+    uintmax_t size;
+    uintmax_t capacity;
+    uintmax_t *data;
+    uint8_t positive;
+} BGN;
+
+#else
+
+typedef struct {
+    uintmax_t size;
+} BGN;
+
+#endif
+
+
+
 /// \Documentation
 /// Explained using a 64 bits architecture.
 
 
 /// BiG Number is the default structure, used to hide implementation
-typedef struct {
-    uintmax_t size;
-} BGN;
 
 /// BGN_new_number create a BigNumber initialized in 0
 /// \return new Big Number
