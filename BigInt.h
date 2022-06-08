@@ -27,8 +27,10 @@ typedef struct struct_vector {
 
 #else
 
+/// don't make manual usage from this struct, is just a facade over BGV.
+/// \n if you want to manually change the attributes enable BGN_SHOW_IMP
 typedef struct {
-    uintmax_t size;
+    const uintmax_t size;
 } BGN;
 
 #endif
