@@ -6,6 +6,7 @@
 #pragma once
 
 #include <stdint.h>
+#include <stdbool.h>
 
 /// enable to be able to modify implementation from the code
 /// \n is less safe
@@ -22,7 +23,7 @@ typedef struct struct_vector {
     uintmax_t size;
     uintmax_t capacity;
     uintmax_t *data;
-    uint8_t positive;
+    uint8_t positive; // positive if == 0
 } BGN;
 
 #else
@@ -84,6 +85,17 @@ BGN *BGN_shift_left(BGN *number, uintmax_t shift);
 /// \param shift number of bits to shift.
 /// \return new Big Number, equal to 'number' shifted to right 'shift' times.
 BGN *BGN_shift_right(BGN *number, uintmax_t shift);
+
+/// BGN_is_zero returns true if the number is zero
+/// \param number number to check if is zero
+/// \return true if number is zero
+bool BGN_is_zero(BGN *number);
+
+/// cmp with zero
+/// \param number number to compare
+/// \return positive, zero or negative based on number
+int BGN_cmp_zero(BGN *number);
+
 
 /// BGN_base_10 write in the buffer the base 10 string of the number
 /// \param number number to be written

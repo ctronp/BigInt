@@ -230,9 +230,33 @@ BGN *BGN_shift_right(BGN *number, uintmax_t shift) {
     return out.BGN;
 }
 
-void BGN_base_10(BGN *number, char *buffer) {
+bool BGN_is_zero(BGN *number) {
     UN in;
     in.BGN = number;
 
-    
+    bg_fit(in.BGV);
+
+    return (in.BGV->size != 0);
+}
+
+int BGN_cmp_zero(BGN *number) {
+    UN in;
+    in.BGN = number;
+
+    bg_fit(in.BGV);
+
+    if (in.BGV->size) {
+        if (in.BGV->positive == positive_zero) return 1;
+        return -1;
+    }
+    return 0;
+}
+
+
+// TODO complete this function
+void BGN_base_10(BGN *number, char *buffer) {
+    UN in;
+    in.BGN = number;
+// Recommended lecture: https://johnnylee-sde.github.io/Fast-unsigned-integer-to-string/
+
 }
