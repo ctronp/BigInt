@@ -195,7 +195,6 @@ BGN *BGN_shift_left(BGN *number, uintmax_t shift) {
     return out.BGN;
 }
 
-// TODO solve bug in test 6
 BGN *BGN_shift_right(BGN *number, uintmax_t shift) {
     UN in;
     UN out;
