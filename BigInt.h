@@ -82,3 +82,8 @@ BGN *BGN_shift_left(BGN *number, uintmax_t shift);
 /// \param shift number of bits to shift.
 /// \return new Big Number, equal to 'number' shifted to right 'shift' times.
 BGN *BGN_shift_right(BGN *number, uintmax_t shift);
+
+/// BGN_base_10 write in the buffer the base 10 string of the number
+/// \param number number to be written
+/// \param buffer where the number will be written
+void BGN_base_10(BGN *number, char *buffer);

@@ -230,3 +230,10 @@ BGN *BGN_shift_right(BGN *number, uintmax_t shift) {
     bg_fit(out.BGV);
     return out.BGN;
 }
+
+void BGN_base_10(BGN *number, char *buffer) {
+    UN in;
+    in.BGN = number;
+
+    
+}
