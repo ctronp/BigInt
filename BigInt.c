@@ -5,10 +5,41 @@
 
 #include <stdlib.h>
 #include <string.h>
+#include <stdarg.h>
 
 //typedef unsigned char byte;
 
 const uintmax_t n_bits = sizeof(uintmax_t) * 8;
+const uintmax_t h_bits = n_bits / 2;
+const uintmax_t left_mask = UINTMAX_MAX << (n_bits / 2);
+const uintmax_t right_mask = UINTMAX_MAX >> (n_bits / 2);
+
+#ifdef UINT128_MAX
+
+typedef uint64_t uinthalf_t;
+typedef int64_t inthalf_t;
+
+#elif UINT64_MAX
+
+typedef uint32_t uinthalf_t;
+typedef int32_t inthalf_t;
+
+#elif UINT32_MAX
+
+typedef uint16_t uinthalf_t;
+typedef int16_t inthalf_t;
+
+#elif UINT16_MAX
+
+typedef uint8_t uinthalf_t;
+typedef int8_t inthalf_t;
+
+#else
+
+typedef uint8_t uinthalf_t;
+typedef uint8_t inthalf_t;
+
+#endif
 
 /// Positive Number enum
 typedef enum struct_positive {
@@ -38,6 +69,21 @@ static inline void bg_fit(BGV *vector) {
         vector->capacity = vector->size;
         vector->data = realloc(vector->data, sizeof(uintmax_t) * vector->size);
     }
+}
+
+static inline void bg_resize(BGV *vector, uintmax_t size) {
+    if (!vector->size) {
+        vector->data = malloc(sizeof(uintmax_t) * size);
+        vector->size = size;
+        return;
+    }
+
+    realloc(vector->data, size);
+    if (size > vector->size)
+        for (unsigned i = vector->size; i < size; i++) {
+            vector->data[i] = 0;
+        }
+    vector->size = size;
 }
 
 static inline void bg_append(BGV *vector, uintmax_t value) {
@@ -97,6 +143,11 @@ void BGN_delete(BGN *number) {
     in.BGN = number;
     free(in.BGV->data);
     free(number);
+}
+
+void BGN_vdelete(BGN *number, ...) {
+    va_list ptr;
+
 }
 
 BGN *BGN_from_integer(intmax_t number) {
@@ -250,6 +301,18 @@ int BGN_cmp_zero(BGN *number) {
         return -1;
     }
     return 0;
+}
+
+// Based on Karatsuba Algorithm
+BGN *BGN_multiply(BGN *number1, BGN *number2) {
+    UN in1, in2, out;
+    in1.BGN = number1;
+    in2.BGN = number2;
+    out.BGV = bg_with_capacity_calloc(2 * (in1.BGV->size + in2.BGV->size));
+    out.BGV->size = 2 * (in1.BGV->size + in2.BGV->size);
+
+    while (in1.BGV->size < in2.BGV->size);
+    return out.BGN;
 }
 
 

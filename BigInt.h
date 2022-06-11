@@ -101,3 +101,16 @@ int BGN_cmp_zero(BGN *number);
 /// \param number number to be written
 /// \param buffer where the number will be written
 void BGN_base_10(BGN *number, char *buffer);
+
+
+/// check if stdarg.h has been included.
+/// \n not using only _STDARG_H, as llvm use __STDARG_H and any compiler can use other one.
+#if defined(_STDARG_H) || defined(__STDARG_H) || (defined(va_start) && defined(va_arg) && defined(va_end))
+#define STDARG_H
+
+/// delete various numbers with one function
+/// \param number first number to delete (free)
+/// \param ... other numbers to delete (free)
+void BGN_vdelete(BGN *number, ...);
+
+#endif

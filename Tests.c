@@ -5,9 +5,10 @@
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdarg.h>
 #include "BigInt.h"
 
-#define IS_INT(x) ((x) * 0 - 1) < (x)
+#define IS_INT(x) (((x) * 0 - 1) < (x))
 #define INT_PRINT(x) printf(#x": %llu\n", (long long unsigned)(x))
 #define UNS_PRINT(x) printf(#x": %lld\n", (long long)(x))
 #define DEBUG_P(x) IS_INT(x) ? INT_PRINT(x) : UNS_PRINT(x)
@@ -205,6 +206,29 @@ bool shift_left_right_negative() {
     return answer;
 }
 
+bool shift_left_zero() {
+    BGN *t1 = BGN_new_number();
+    BGN *t2 = BGN_shift_left(t1, 60);
+    BGN *t3 = BGN_from_integer(0);
+    BGN *t4 = BGN_from_unsigned(0);
+
+    bool answer =
+            0 == BGN_to_unsigned(t1) &&
+            0 == BGN_to_unsigned(t2) &&
+            0 == BGN_to_unsigned(t3) &&
+            0 == BGN_to_unsigned(t4);
+
+    BGN_delete(t1);
+    BGN_delete(t2);
+    BGN_delete(t3);
+    BGN_delete(t4);
+    BGN_vdelete(t1, t2, t3, t4);
+
+    return answer;
+}
+
+// TODO add tests to BGN_is_zero and BGN_cmp_zero
+
 int main() {
     default_terminal();
 
@@ -219,6 +243,7 @@ int main() {
     test(shift_right_negative);
     test(shift_left_right_positive);
     test(shift_left_right_negative);
+    test(shift_left_zero);
 
     if (failure) exit(1);
     exit(0);
