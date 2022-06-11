@@ -10,9 +10,9 @@
 //typedef unsigned char byte;
 
 const uintmax_t n_bits = sizeof(uintmax_t) * 8;
-const uintmax_t h_bits = n_bits / 2;
-const uintmax_t left_mask = UINTMAX_MAX << (n_bits / 2);
-const uintmax_t right_mask = UINTMAX_MAX >> (n_bits / 2);
+const uintmax_t h_bits = (sizeof(uintmax_t) * 8) / 2;
+const uintmax_t left_mask = UINTMAX_MAX << ((sizeof(uintmax_t) * 8) / 2);
+const uintmax_t right_mask = UINTMAX_MAX >> ((sizeof(uintmax_t) * 8) / 2);
 
 #ifdef UINT128_MAX
 
