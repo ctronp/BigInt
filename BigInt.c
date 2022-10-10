@@ -304,6 +304,7 @@ int BGN_cmp_zero(BGN *number) {
 }
 
 // Based on Karatsuba Algorithm
+// TODO
 BGN *BGN_multiply(BGN *number1, BGN *number2) {
     UN in1, in2, out;
     in1.BGN = number1;
