@@ -1,6 +1,9 @@
 # Small library for Big Integers
 
-made for simple usage where pure C is the safest option (this app still under development).
+this project is unfinished, if you want to support or help with its development do not hesitate to write me or leave an
+issue.
+
+made for simple usage where pure C is the safest option.
 
 # Usage
 
