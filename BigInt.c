@@ -10,9 +10,9 @@
 //typedef unsigned char byte;
 
 const uintmax_t n_bits = sizeof(uintmax_t) * 8;
-const uintmax_t h_bits = (sizeof(uintmax_t) * 8) / 2;
-const uintmax_t left_mask = UINTMAX_MAX << ((sizeof(uintmax_t) * 8) / 2);
-const uintmax_t right_mask = UINTMAX_MAX >> ((sizeof(uintmax_t) * 8) / 2);
+const uintmax_t h_bits = n_bits / 2;
+const uintmax_t left_mask = UINTMAX_MAX << h_bits;
+const uintmax_t right_mask = UINTMAX_MAX >> h_bits;
 
 #ifdef UINT128_MAX
 
@@ -61,7 +61,7 @@ typedef union {
     BGV *BGV;
 } UN;
 
-static inline void bg_fit(BGV *vector) {
+void bg_fit(BGV *vector) {
     while (vector->size && !vector->data[vector->size - 1]) {
         --vector->size;
     }
@@ -71,7 +71,7 @@ static inline void bg_fit(BGV *vector) {
     }
 }
 
-static inline void bg_resize(BGV *vector, uintmax_t size) {
+void bg_resize(BGV *vector, uintmax_t size) {
     if (!vector->size) {
         vector->data = malloc(sizeof(uintmax_t) * size);
         vector->size = size;
@@ -86,7 +86,7 @@ static inline void bg_resize(BGV *vector, uintmax_t size) {
     vector->size = size;
 }
 
-static inline void bg_append(BGV *vector, uintmax_t value) {
+void bg_append(BGV *vector, uintmax_t value) {
     if (vector->capacity != vector->size) {
         vector->data[vector->size++] = value;
     } else if (vector->capacity == 0) {
@@ -100,15 +100,15 @@ static inline void bg_append(BGV *vector, uintmax_t value) {
     }
 }
 
-static inline size_t bg_byte_capacity(BGV *vector) {
+size_t bg_byte_capacity(BGV *vector) {
     return vector->capacity * sizeof(uintmax_t);
 }
 
-static inline size_t bg_byte_size(BGV *vector) {
+size_t bg_byte_size(BGV *vector) {
     return vector->size * sizeof(uintmax_t);
 }
 
-static inline BGV *bg_with_capacity_calloc(uintmax_t capacity) {
+BGV *bg_with_capacity_calloc(uintmax_t capacity) {
     UN out;
     out.BGV = malloc(sizeof(BGV));
     *out.BGV = (BGV) {
@@ -120,14 +120,14 @@ static inline BGV *bg_with_capacity_calloc(uintmax_t capacity) {
     return out.BGV;
 }
 
-static inline void bg_copy_vector(BGV *origin, uintmax_t *destiny) {
+void bg_copy_vector(BGV *origin, uintmax_t *destiny) {
     bg_fit(origin);
     for (unsigned i = 0; i < origin->size; i++) {
         destiny[i] = origin->data[i];
     }
 }
 
-static inline void bg_copy_to_vector(const uintmax_t size, const uintmax_t *origin, BGV *destiny) {
+void bg_copy_to_vector(const uintmax_t size, const uintmax_t *origin, BGV *destiny) {
     for (uintmax_t i = 0; i < size; i++) {
         destiny->data[i] = origin[i];
     }

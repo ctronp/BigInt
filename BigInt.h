@@ -8,23 +8,11 @@
 #include <stdint.h>
 #include <stdbool.h>
 
-/// enable to be able to modify implementation from the code
-/// \n is less safe
-#ifdef BGN_SHOW_IMP
-
-/// Positive Number enum
-typedef enum struct_positive {
-    positive_zero = 0,
-    negative = 1,
-} Positive;
+/// Enable or disable the facade. Disable by default
+#ifndef BGN_HIDE_IMP
 
 /// BiG Vector
-typedef struct struct_vector {
-    uintmax_t size;
-    uintmax_t capacity;
-    uintmax_t *data;
-    uint8_t positive; // positive if == 0
-} BGN;
+typedef struct struct_vector BGN;
 
 #else
 
