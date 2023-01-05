@@ -1,7 +1,7 @@
 # Small library for Big Integers
 
-this project is unfinished, if you want to support or help with its development do not hesitate to write me or leave an
-issue.
+This project is unfinished, if you want to support or help with the development it is not necessary to write me,
+you can make use of the project as you wish.
 
 made for simple usage where pure C is the safest option.
 

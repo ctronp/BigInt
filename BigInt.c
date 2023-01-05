@@ -47,21 +47,8 @@ typedef enum struct_positive {
     negative = 1,
 } Positive;
 
-/// BiG Vector
-typedef struct struct_vector {
-    uintmax_t size;
-    uintmax_t capacity;
-    uintmax_t *data;
-    uint8_t positive;
-} BGV;
 
-/// Union to change file type
-typedef union {
-    BGN *BGN;
-    BGV *BGV;
-} UN;
-
-void bg_fit(BGV *vector) {
+void bg_fit(BGN *vector) {
     while (vector->size && !vector->data[vector->size - 1]) {
         --vector->size;
     }
@@ -71,7 +58,7 @@ void bg_fit(BGV *vector) {
     }
 }
 
-void bg_resize(BGV *vector, uintmax_t size) {
+void bg_resize(BGN *vector, uintmax_t size) {
     if (!vector->size) {
         vector->data = malloc(sizeof(uintmax_t) * size);
         vector->size = size;
@@ -86,7 +73,7 @@ void bg_resize(BGV *vector, uintmax_t size) {
     vector->size = size;
 }
 
-void bg_append(BGV *vector, uintmax_t value) {
+void bg_append(BGN *vector, uintmax_t value) {
     if (vector->capacity != vector->size) {
         vector->data[vector->size++] = value;
     } else if (vector->capacity == 0) {
@@ -100,59 +87,57 @@ void bg_append(BGV *vector, uintmax_t value) {
     }
 }
 
-size_t bg_byte_capacity(BGV *vector) {
+size_t bg_byte_capacity(BGN *vector) {
     return vector->capacity * sizeof(uintmax_t);
 }
 
-size_t bg_byte_size(BGV *vector) {
+size_t bg_byte_size(BGN *vector) {
     return vector->size * sizeof(uintmax_t);
 }
 
-BGV *bg_with_capacity_calloc(uintmax_t capacity) {
-    UN out;
-    out.BGV = malloc(sizeof(BGV));
-    *out.BGV = (BGV) {
+BGN *bg_with_capacity_calloc(uintmax_t capacity) {
+    BGN *out;
+    out = malloc(sizeof(BGN));
+    *out = (BGN) {
             .size = 0,
             .capacity = capacity,
             .data = calloc(capacity, sizeof(uintmax_t)),
             .positive = positive_zero
     };
-    return out.BGV;
+    return out;
 }
 
-void bg_copy_vector(BGV *origin, uintmax_t *destiny) {
+void bg_copy_vector(BGN *origin, uintmax_t *destiny) {
     bg_fit(origin);
     for (unsigned i = 0; i < origin->size; i++) {
         destiny[i] = origin->data[i];
     }
 }
 
-void bg_copy_to_vector(const uintmax_t size, const uintmax_t *origin, BGV *destiny) {
+void bg_copy_to_vector(const uintmax_t size, const uintmax_t *origin, BGN *destiny) {
     for (uintmax_t i = 0; i < size; i++) {
         destiny->data[i] = origin[i];
     }
 }
 
 BGN *BGN_new_number() {
-    return (BGN *) calloc(1, sizeof(BGV));
+    return (BGN *) calloc(1, sizeof(BGN));
 }
 
 
 void BGN_delete(BGN *number) {
-    UN in;
-    in.BGN = number;
-    free(in.BGV->data);
+    free(number->data);
     free(number);
 }
 
-void BGN_vdelete(BGN *number, ...) {
-    va_list ptr;
-
-}
+//void BGN_vdelete(BGN *number, ...) {
+//    va_list ptr;
+//
+//}
 
 BGN *BGN_from_integer(intmax_t number) {
-    UN out;
-    out.BGV = malloc(sizeof(BGV));
+    BGN *out;
+    out = malloc(sizeof(BGN));
 
     Positive positive;
     if (number >= 0) {
@@ -163,164 +148,147 @@ BGN *BGN_from_integer(intmax_t number) {
     }
 
 
-    *out.BGV = (BGV) {
+    *out = (BGN) {
             .capacity = 1,
             .data = malloc(sizeof(uintmax_t)),
             .size = 1,
             .positive = positive
     };
-    out.BGV->data[0] = (uintmax_t) number;
-    return out.BGN;
+    out->data[0] = (uintmax_t) number;
+    return out;
 }
 
 BGN *BGN_from_unsigned(uintmax_t number) {
-    UN out;
-    out.BGV = malloc(sizeof(BGV));
+    BGN *out;
+    out = malloc(sizeof(BGN));
 
-    *out.BGV = (BGV) {
+    *out = (BGN) {
             .capacity = 1,
             .data = malloc(sizeof(uintmax_t)),
             .size = 1,
             .positive = positive_zero
     };
-    out.BGV->data[0] = number;
-    return out.BGN;
+    out->data[0] = number;
+    return out;
 }
 
 uintmax_t BGN_to_unsigned(BGN *number) {
-    UN in;
-    in.BGN = number;
-
-    if (in.BGV->size == 0) {
+    if (number->size == 0) {
         return 0;
     }
 
-    return in.BGV->data[0];
+    return number->data[0];
 }
 
 intmax_t BGN_to_integer(BGN *number) {
-    UN in;
-    in.BGN = number;
-
-    if (in.BGV->size == 0) {
+    if (number->size == 0) {
         return 0;
     }
 
-    if (in.BGV->positive == negative) {
-        return -((intmax_t) (in.BGV->data[0] & (UINTMAX_MAX >> 1)));
+    if (number->positive == negative) {
+        return -((intmax_t) (number->data[0] & (UINTMAX_MAX >> 1)));
     }
-    return (intmax_t) (in.BGV->data[0] & (UINTMAX_MAX >> 1));
+    return (intmax_t) (number->data[0] & (UINTMAX_MAX >> 1));
 }
 
 BGN *BGN_shift_left(BGN *number, uintmax_t shift) {
-    UN in;
-    UN out;
+    BGN *out;
 
-    in.BGN = number;
     const unsigned new_zeros = shift / n_bits;
     const unsigned shift_size = shift % n_bits;
 
     if (shift_size == 0) {
-        out.BGV = bg_with_capacity_calloc(new_zeros + in.BGN->size);
-        out.BGV->size = new_zeros + in.BGN->size;
-        out.BGV->positive = in.BGV->positive;
-        bg_copy_vector(in.BGV, &out.BGV->data[new_zeros]);
-        return out.BGN;
+        out = bg_with_capacity_calloc(new_zeros + number->size);
+        out->size = new_zeros + number->size;
+        out->positive = number->positive;
+        bg_copy_vector(number, &out->data[new_zeros]);
+        return out;
     }
 
     const uintmax_t diff_bits = (n_bits - shift_size);
 
-    out.BGV = bg_with_capacity_calloc(new_zeros + in.BGN->size + 1);
-    out.BGV->size = new_zeros + in.BGN->size + 1;
-    out.BGV->positive = in.BGV->positive;
+    out = bg_with_capacity_calloc(new_zeros + number->size + 1);
+    out->size = new_zeros + number->size + 1;
+    out->positive = number->positive;
 
     uintmax_t carry = 0;
-    for (uintmax_t i = 0; i < in.BGV->size; i++) {
+    for (uintmax_t i = 0; i < number->size; i++) {
         const uintmax_t j = i + new_zeros;
-        out.BGV->data[j] = in.BGV->data[i] << shift_size;
-        out.BGV->data[j] |= carry;
-        carry = in.BGV->data[i] >> diff_bits;
+        out->data[j] = number->data[i] << shift_size;
+        out->data[j] |= carry;
+        carry = number->data[i] >> diff_bits;
     }
 
-    bg_fit(out.BGV);
-    return out.BGN;
+    bg_fit(out);
+    return out;
 }
 
 BGN *BGN_shift_right(BGN *number, uintmax_t shift) {
-    UN in;
-    UN out;
+    BGN *out;
 
-    in.BGN = number;
     const unsigned less_size = shift / n_bits;
     const unsigned shift_size = shift % n_bits;
 
     if (shift_size == 0) {
-        out.BGV = bg_with_capacity_calloc(in.BGN->size - less_size);
-        out.BGV->size = in.BGN->size - less_size;
-        out.BGV->positive = in.BGV->positive;
-        bg_copy_to_vector(in.BGV->size - less_size, &in.BGV->data[less_size], out.BGV);
-        return out.BGN;
+        out = bg_with_capacity_calloc(number->size - less_size);
+        out->size = number->size - less_size;
+        out->positive = number->positive;
+        bg_copy_to_vector(number->size - less_size, &number->data[less_size], out);
+        return out;
     }
 
     const uintmax_t diff_bits = (n_bits - shift_size);
 
-    out.BGV = bg_with_capacity_calloc(in.BGN->size - less_size);
-    out.BGV->size = in.BGN->size - less_size;
-    out.BGV->positive = in.BGV->positive;
+    out = bg_with_capacity_calloc(number->size - less_size);
+    out->size = number->size - less_size;
+    out->positive = number->positive;
 
     uintmax_t carry = 0;
-    for (uintmax_t i = 0; i < out.BGV->size; i++) {
-        const uintmax_t in_pos = in.BGV->size - 1 - i;
-        const uintmax_t out_pos = out.BGV->size - 1 - i;
-        out.BGV->data[out_pos] = in.BGV->data[in_pos] >> shift_size;
-        out.BGV->data[out_pos] |= carry;
-        carry = in.BGV->data[in_pos] << diff_bits;
+    for (uintmax_t i = 0; i < out->size; i++) {
+        const uintmax_t in_pos = number->size - 1 - i;
+        const uintmax_t out_pos = out->size - 1 - i;
+        out->data[out_pos] = number->data[in_pos] >> shift_size;
+        out->data[out_pos] |= carry;
+        carry = number->data[in_pos] << diff_bits;
     }
 
-    bg_fit(out.BGV);
-    return out.BGN;
+    bg_fit(out);
+    return out;
 }
 
 bool BGN_is_zero(BGN *number) {
-    UN in;
-    in.BGN = number;
-
-    bg_fit(in.BGV);
-
-    return (in.BGV->size != 0);
+    bg_fit(number);
+    return (number->size != 0);
 }
 
 int BGN_cmp_zero(BGN *number) {
-    UN in;
-    in.BGN = number;
+    bg_fit(number);
 
-    bg_fit(in.BGV);
-
-    if (in.BGV->size) {
-        if (in.BGV->positive == positive_zero) return 1;
+    if (number->size) {
+        if (number->positive == positive_zero) return 1;
         return -1;
     }
     return 0;
 }
 
-// Based on Karatsuba Algorithm
-// TODO
-BGN *BGN_multiply(BGN *number1, BGN *number2) {
-    UN in1, in2, out;
-    in1.BGN = number1;
-    in2.BGN = number2;
-    out.BGV = bg_with_capacity_calloc(2 * (in1.BGV->size + in2.BGV->size));
-    out.BGV->size = 2 * (in1.BGV->size + in2.BGV->size);
+// TODO use grade-school multiplication
+BGN *BGN_multiply(BGN *in1, BGN *in2) {
+    BGN *out;
 
-    while (in1.BGV->size < in2.BGV->size);
-    return out.BGN;
+    bg_fit(in1);
+    bg_fit(in2);
+
+    out = bg_with_capacity_calloc(2 * (in1->size + in2->size));
+    out->size = 2 * (in1->size + in2->size);
+
+    while (in1->size < in2->size);
+    return out;
 }
 
 
 // TODO complete this function
 void BGN_base_10(BGN *number, char *buffer) {
-    UN in;
-    in.BGN = number;
+    \
 // Recommended lecture: https://johnnylee-sde.github.io/Fast-unsigned-integer-to-string/
 
 }

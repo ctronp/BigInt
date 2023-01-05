@@ -8,22 +8,14 @@
 #include <stdint.h>
 #include <stdbool.h>
 
-/// Enable or disable the facade. Disable by default
-#ifndef BGN_HIDE_IMP
 
-/// BiG Vector
-typedef struct struct_vector BGN;
-
-#else
-
-/// don't make manual usage from this struct, is just a facade over BGV.
-/// \n if you want to manually change the attributes disable BGN_HIDE_IMP
-typedef struct {
-    const uintmax_t size;
+/// BiG Number
+typedef struct struct_vector {
+    uintmax_t size;
+    uintmax_t capacity;
+    uintmax_t *data;
+    uint8_t positive;
 } BGN;
-
-#endif
-
 
 
 /// \Documentation
