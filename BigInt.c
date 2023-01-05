@@ -65,8 +65,9 @@ void bg_resize(BGN *vector, uintmax_t size) {
         return;
     }
 
-    realloc(vector->data, size);
+    vector->data = realloc(vector->data, size);
     if (size > vector->size)
+        // TODO replace with memset
         for (unsigned i = vector->size; i < size; i++) {
             vector->data[i] = 0;
         }
@@ -130,10 +131,10 @@ void BGN_delete(BGN *number) {
     free(number);
 }
 
-//void BGN_vdelete(BGN *number, ...) {
-//    va_list ptr;
-//
-//}
+void BGN_vdelete(BGN *number, ...) {
+    va_list ptr;
+    // TODO finish this function
+}
 
 BGN *BGN_from_integer(intmax_t number) {
     BGN *out;
